@@ -1,5 +1,5 @@
 CC=gcc 
-CFLAGS=-c -Wall -march=x86-64 -pipe -Os
+CFLAGS=-c -Wall -march=native -pipe -Os
 LDFLAGS=
 SOURCES=dse.c rijndael-alg-fst.c
 OBJECTS=$(SOURCES:.c=.o)
