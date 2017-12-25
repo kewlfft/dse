@@ -83,7 +83,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
     u32 rk[4*(MAXNR + 1)]; /* key schedule */
     FILE *fkey, *fsrc, *fdst;
     u8 iv[IV_SIZE], cipherKey[KEY_SIZE], filebuf[IO_SIZE], block[16], *in, *out;
-    int i, numBlocks, sread, status = 1, round = 0;
+    int i, numBlocks, sread = 0, status = 1, round = 0;
 
     if((fdst = fopen(dst, "r")) != NULL) // check if file exists
     {
@@ -110,13 +110,11 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
         goto quit;
     }
 
-
     if(KEY_SIZE != fread(cipherKey, 1, KEY_SIZE + 1, fkey))
     {
         printf(msg1, keyfile);
         goto quit;
     }
-
 
     if(encrypt)
     {
@@ -139,9 +137,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
         }
     }
 
-
     Nr = rijndaelKeySetupEnc(rk, cipherKey, KEY_SIZE * 8);
-
 
     while((sread = fread(filebuf, 1, IO_SIZE, fsrc)) > 0)
     {
@@ -170,8 +166,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
         if(!(round % 16)) printf("."); // progress indicator
     }
 
-
-    printf("DONE %uMB\n", round / 16);
+    printf("Done %uKB\n", round * 16);
     status = 0; // SUCCESS
 
 quit:
@@ -233,7 +228,7 @@ int password(char *pass)
 
 int gen_key(char *dst, int pass)
 {
-    int i, sum, Nr;
+    int i, sum = 0, Nr;
     u32 rk[4*(MAXNR + 1)];
     FILE *fdst;
     u8 block[512];
@@ -290,14 +285,12 @@ int main(int argc, char *argv[])
             return crypt(argv[1], *argv[2] == 'E', argv[3], argv[4]);
         }
     }
-    printf("DSE v1.00-CLI, Freeware - use at your own risk.\n"
-           "(c)2004 Dariusz Stanislawek, http://freezip.cjb.net/freeware/\n\n"
+    printf("DSE v1.10-CLI, Freeware - use at your own risk.\n"
            "Usage: dse keyfile e|d source destination\n\n"
-           "Create a random-content key file: dse keyfile\n"
-           "Create a key file from a password: dse keyfile p\n"
+           "Create a random-content key file: dse my.key\n"
+           "Create a key file from a password: dse my.key p\n"
            "Key file size is 32 bytes.\n"
-           "Encryption example: dse a:\\my.key e d:\\x\\data.zip data.enc\n"
-           "Decryption example: dse my.key d data.enc c:\\tmp\\data.zip\n");
+           "Encryption example: dse my.key e data.zip data.enc\n"
+           "Decryption example: dse my.key d data.enc data.zip\n");
     return 1;
 }
-
