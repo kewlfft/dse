@@ -2,7 +2,7 @@
 AES encryption using keyfile
 
 ## Usage
-`dse keyfile e|d source destination`
+```dse keyfile e|d source destination```
 Create a random-content key file: `dse keyfile`
 Create a key file from a password: `dse keyfile p`
 Key file size is 32 bytes.
