@@ -16,11 +16,11 @@ dse keyfile p
 Key file size is 32 bytes.
 
 ## Example
-* Encryption example:
+- Encryption example:
 ```
 dse my.key e data.zip data.enc
 ```
-* Decryption example:
+- Decryption example:
 ```
 dse my.key d data.enc data.zip
 ```
