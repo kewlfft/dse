@@ -1,5 +1,5 @@
 /*=======================================================================
-DSE v1.00-CLI (command-line interface)                    rev: 2004.09.17
+DSE                                               first rev: 2004.09.17
 
 Copyright (c) 2004 Dariusz Stanislawek
 All rights reserved.
