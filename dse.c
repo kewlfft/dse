@@ -37,11 +37,6 @@ IV: 16 bytes
 Max File Size: unlimited
 Cipher File Structure: [IV = 16 random bytes] + [cipherdata]
 
-Change Log
-----------
-v1.00
-- released 2004.09.17
-
 Website
 -------
 http://www.ozemail.com.au/~nulifetv/freezip/freeware/
@@ -59,7 +54,7 @@ http://freezip.cjb.net/freeware/
 
 #define KEY_SIZE 32 // bytes
 #define IV_SIZE 16
-#define IO_SIZE (64 * 1024) // the optimal buffer size for sequential I/O on Windows NT/2k/XP
+#define IO_SIZE (64 * 1024) // 64k buffer size for sequential I/O
 
 //typedef unsigned char u8;
 //typedef unsigned int u32;
@@ -70,8 +65,8 @@ void gen_iv(u8 *buf, int size)
     while(--size >= 0) buf[size] += rand();
 }
 
-char msg1[] = "%s: The data is invalid\n";
-char msg2[] = "%s: The file exists\n";
+char msg1[] = "The data is invalid: %s\n";
+char msg2[] = "The file already exists: %s\n";
 
 
 /*=====================================================================*/
@@ -83,7 +78,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
     u32 rk[4*(MAXNR + 1)]; /* key schedule */
     FILE *fkey, *fsrc, *fdst;
     u8 iv[IV_SIZE], cipherKey[KEY_SIZE], filebuf[IO_SIZE], block[16], *in, *out;
-    int i, numBlocks, sread = 0, status = 1, round = 0;
+    int i, numBlocks, sread = 0, sreadtot = 0, status = 1, round = 0;
 
     if((fdst = fopen(dst, "r")) != NULL) // check if file exists
     {
@@ -118,7 +113,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
 
     if(encrypt)
     {
-        strcpy(filebuf, src); // PRNG init 1
+        memcpy(filebuf, src, strlen(src)+1); // PRNG init 1
         for(i = (IO_SIZE / 4) - 1; i >= 0; i--) sread += ((int*)filebuf)[i]; // PRNG init 2
         srand(sread ^ time(NULL)); // PRNG init 3
         gen_iv(iv, IV_SIZE); // PRNG
@@ -141,6 +136,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
 
     while((sread = fread(filebuf, 1, IO_SIZE, fsrc)) > 0)
     {
+        sreadtot += sread;
         in = iv;
         out = filebuf;
         numBlocks = sread / 16;
@@ -163,10 +159,9 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
             goto quit;
         }
         round++;
-        if(!(round % 16)) printf("."); // progress indicator
+        if(!(round % 16)) printf("."); // progress indicator every 16 rounds
     }
-
-    printf("Done %uKB\n", round * 16);
+    printf("Done %u Bytes\n", sreadtot);
     status = 0; // SUCCESS
 
 quit:
@@ -226,45 +221,45 @@ int password(char *pass)
 }
 
 
-int gen_key(char *dst, int pass)
+int gen_key(char *dst, int pass) // keyfile name, pass true to request password input
 {
     int i, sum = 0, Nr;
     u32 rk[4*(MAXNR + 1)];
     FILE *fdst;
     u8 block[512];
 
-    if((fdst = fopen(dst, "r")) != NULL) // check if file exists
+    if((fdst = fopen(dst, "r")) != NULL) // check if keyfile already exists
     {
         printf(msg2, dst);
         fclose(fdst);
         return 1;
     }
 
-    if(pass)
+    if(pass) // request password input
     {
-        if(!password(block)) return 1;
+        if(!password((char *)block)) return 1;
     }
-    else strcpy(block, dst); // PRNG init 1
+    else memcpy(block, dst, strlen(dst)+1); // PRNG init 1: copy keyfile name
 
-    if((fdst = fopen(dst, "wb")) == NULL)
+    if((fdst = fopen(dst, "wb")) == NULL) // open keyfile for wb
     {
         perror(dst);
         return 1;
     }
 
     Nr = rijndaelKeySetupEnc(rk, block, 32 * 8);
-    if(!pass)
+    if(!pass) // generate random key
     {
-        for(i = (sizeof(block) / 4) - 1; i >= 0; i--) sum += ((int*)block)[i]; // PRNG init 2
-        srand(sum ^ time(NULL)); // PRNG init 3
-        gen_iv(block, 16); // PRNG
+        for(i = (sizeof(block) / 4) - 1; i >= 0; i--) sum += ((int*)block)[i]; // PRNG init 2: add first 128 Bytes
+        srand(sum ^ time(NULL)); // PRNG init 3: set random seed (sum XOR time)
+        gen_iv(block, 16); // PRNG: random 16 bytes
     }
     rijndaelEncrypt(rk, Nr, block, block + 16);
     rijndaelEncrypt(rk, Nr, block + 16, block);
-    fwrite(block, 1, 32, fdst);
+    fwrite(block, 1, 32, fdst); // save keyfile
     fclose(fdst);
-    printf("OK\n");
-    memset(block, 0, 32);
+    memset(block, 0, 32); // overwrite with 0
+    printf("Keyfile saved: %s\n", dst);
     return 0;
 }
 
@@ -285,11 +280,12 @@ int main(int argc, char *argv[])
             return crypt(argv[1], *argv[2] == 'E', argv[3], argv[4]);
         }
     }
-    printf("DSE v1.10-CLI, Freeware - use at your own risk.\n"
-           "Usage: dse keyfile e|d source destination\n\n"
-           "Create a random-content key file: dse my.key\n"
-           "Create a key file from a password: dse my.key p\n"
-           "Key file size is 32 bytes.\n"
+
+    printf("DSE v1.20-CLI, Freeware - use at your own risk.\n"
+           "Usage: dse my.key e|d source destination\n\n"
+           "Create a random-content keyfile: dse my.key\n"
+           "Create a keyfile from a password: dse my.key p\n"
+           "Keyfile size is 32 bytes.\n"
            "Encryption example: dse my.key e data.zip data.enc\n"
            "Decryption example: dse my.key d data.enc data.zip\n");
     return 1;
