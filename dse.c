@@ -193,7 +193,6 @@ int passgets(char *s, int n)
         c = getchar();
         if(c < 32 || c > 126) break;
         *s++ = c;
-        putchar('*');
     }
     *s = 0;
     return s != t;
