@@ -161,7 +161,7 @@ int crypt(char *keyfile, int encrypt, char *src, char *dst)
         round++;
         if(!(round % 16)) printf("."); // progress indicator every 16 rounds
     }
-    printf("Done %u Bytes\n", sreadtot);
+    printf("Done %s %u Bytes\n", dst, sreadtot);
     status = 0; // SUCCESS
 
 quit:
@@ -281,7 +281,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("DSE v1.20-CLI, Freeware - use at your own risk.\n"
+    printf("DSE v1.30\n"
            "Usage: dse my.key e|d source destination\n\n"
            "Create a random-content keyfile: dse my.key\n"
            "Create a keyfile from a password: dse my.key p\n"
