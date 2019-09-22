@@ -65,6 +65,7 @@ void gen_iv(u8 *buf, int size)
     while(--size >= 0) buf[size] += rand();
 }
 
+char vers[] = "1.31";
 char msg1[] = "The data is invalid: %s\n";
 char msg2[] = "The file already exists: %s\n";
 
@@ -268,24 +269,35 @@ int gen_key(char *dst, int pass) // keyfile name, pass true to request password 
 
 int main(int argc, char *argv[])
 {
-    if(argc == 2 || argc == 3) return gen_key(argv[1], argc == 3);
-    if(argc == 5)
+    if(argc == 2)
     {
-        *argv[2] = toupper(*argv[2]);
-        switch (*argv[2])
+        if (strcmp(argv[1], "-V") == 0 || strcmp(argv[1], "--version") == 0)
         {
-        case 'E':
-        case 'D':
-            return crypt(argv[1], *argv[2] == 'E', argv[3], argv[4]);
+            printf("dse %s\n", vers);
+            return 0;
         }
     }
 
-    printf("DSE v1.30\n"
-           "Usage: dse my.key e|d source destination\n\n"
-           "Create a random-content keyfile: dse my.key\n"
-           "Create a keyfile from a password: dse my.key p\n"
-           "Keyfile size is 32 bytes.\n"
-           "Encryption example: dse my.key e data.zip data.enc\n"
-           "Decryption example: dse my.key d data.enc data.zip\n");
+    if(argc == 2 || argc == 3) return gen_key(argv[1], argc == 3);
+    if(argc == 5)
+    {
+        *argv[2] = tolower(*argv[2]);
+        switch (*argv[2])
+        {
+            case 'e':
+            case 'd':
+                return crypt(argv[1], *argv[2] == 'e', argv[3], argv[4]);
+        }
+    }
+
+    printf("usage:\n"
+           "\tdse <keyfile> [password]\n"
+           "\tdse <keyfile> <e | d> <source> <destination>\n"
+           "\tdse <-V | --version>\n\n"
+           "examples:\n"
+           "\tdse mykey                    creates a random-content 32 bytes keyfile named mykey\n"
+           "\tdse mykey mypsw              creates a 32 bytes keyfile from the password mypsw\n"
+           "\tdse mykey e data data.enc    encryption\n"
+           "\tdse mykey d data.enc data    decryption\n");
     return 1;
 }
