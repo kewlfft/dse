@@ -3,24 +3,26 @@ AES encryption using keyfile
 
 ## Usage
 ```
-dse keyfile e|d source destination
+dse <keyfile> <e | d> <source> <destination>
 ```
 - Create a random-content key file:
 ```
-dse keyfile
+dse <keyfile> [password]
 ```
-- Create a key file from a password:
-```
-dse keyfile p
-```
+If `password` is provided, the keyfile will be generated from it.
 Key file size is 32 bytes.
 
+- Output version number
+```
+dse <-V | --version>
+```
+
 ## Example
-- Encryption example:
+- Encryption:
 ```
-dse my.key e data.zip data.enc
+dse my.key e data data.enc
 ```
-- Decryption example:
+- Decryption:
 ```
-dse my.key d data.enc data.zip
+dse my.key d data.enc data
 ```
