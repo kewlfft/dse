@@ -40,8 +40,9 @@ Cipher File Structure: [IV = 16 random bytes] + [cipherdata]
 Website
 -------
 http://www.ozemail.com.au/~nulifetv/freezip/freeware/
-http://freezip.cjb.net/freeware/
-                                                  freezip(at)bigfoot,com
+=======================================================================
+
+Kewl <xrjy@nygb.rh.bet(rot13)> for the linux adaptations
 =======================================================================*/
 
 
