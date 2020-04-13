@@ -66,7 +66,7 @@ void gen_iv(u8 *buf, int size)
     while(--size >= 0) buf[size] += rand();
 }
 
-char vers[] = "1.32";
+char vers[] = "1.33";
 char msg1[] = "The data is invalid: %s\n";
 char msg2[] = "The file already exists: %s\n";
 
@@ -284,10 +284,10 @@ int usage(int level)
 
 /*=====================================================================*/
 
-
 int main(int argc, char *argv[])
 {
-    if(argc == 2)
+    // option
+    if(argc>1)
     {
         if (strcmp(argv[1], "-V") == 0 || strcmp(argv[1], "--version") == 0)
         {
@@ -298,13 +298,15 @@ int main(int argc, char *argv[])
         {
             usage(1);
             return 0;
-        }        
+        }
+        // not a know option
         if (argv[1][0] == '-')
         {
             usage(0);
             return 1;
         }
     }
+
     // key generator
     if(argc == 2 || argc == 3) return gen_key(argv[1], argc == 3);
 
