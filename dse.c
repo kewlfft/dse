@@ -66,7 +66,7 @@ void gen_iv(u8 *buf, int size)
     while(--size >= 0) buf[size] += rand();
 }
 
-char vers[] = "1.31";
+char vers[] = "1.32";
 char msg1[] = "The data is invalid: %s\n";
 char msg2[] = "The file already exists: %s\n";
 
@@ -264,6 +264,23 @@ int gen_key(char *dst, int pass) // keyfile name, pass true to request password 
     return 0;
 }
 
+int usage(int level)
+{
+    printf("usage:\n"
+       "\tdse <keyfile> [password]\n"
+       "\tdse <keyfile> <e | d> <source> <destination>\n"
+       "\tdse <-V | --version>\n"
+       "\tdse <-h | --help>\n");
+    if (level>0)
+    {
+        printf("examples:\n"
+           "\tdse mykey                  creates a random-content 32 bytes keyfile named mykey\n"
+           "\tdse mykey mypsw            creates a 32 bytes keyfile from the password mypsw\n"
+           "\tdse mykey e data data.enc  encryption\n"
+           "\tdse mykey d data.enc data  decryption\n");
+    }
+    return 0;
+}
 
 /*=====================================================================*/
 
@@ -277,9 +294,21 @@ int main(int argc, char *argv[])
             printf("dse %s\n", vers);
             return 0;
         }
+        if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
+        {
+            usage(1);
+            return 0;
+        }        
+        if (argv[1][0] == '-')
+        {
+            usage(0);
+            return 1;
+        }
     }
-
+    // key generator
     if(argc == 2 || argc == 3) return gen_key(argv[1], argc == 3);
+
+    // file encrypt or decrypt
     if(argc == 5)
     {
         *argv[2] = tolower(*argv[2]);
@@ -291,14 +320,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("usage:\n"
-           "\tdse <keyfile> [password]\n"
-           "\tdse <keyfile> <e | d> <source> <destination>\n"
-           "\tdse <-V | --version>\n\n"
-           "examples:\n"
-           "\tdse mykey                    creates a random-content 32 bytes keyfile named mykey\n"
-           "\tdse mykey mypsw              creates a 32 bytes keyfile from the password mypsw\n"
-           "\tdse mykey e data data.enc    encryption\n"
-           "\tdse mykey d data.enc data    decryption\n");
+    usage(0);
     return 1;
 }
