@@ -2,6 +2,7 @@
 AES encryption using keyfile
 
 ## Usage
+- Encrypt or decrypt the source file into the destination file using a key file:
 ```
 dse <keyfile> <e | d> <source> <destination>
 ```
@@ -9,10 +10,11 @@ dse <keyfile> <e | d> <source> <destination>
 ```
 dse <keyfile> [password]
 ```
-If `password` is provided, the keyfile will be generated from it.
-Key file size is 32 bytes.
+If `password` is provided, which is optional, the keyfile will be generated from it.
 
-- Output version number
+The generated key file has a size of 32 bytes.
+
+- Output version number:
 ```
 dse <-V | --version>
 ```
