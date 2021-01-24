@@ -180,23 +180,21 @@ quit:
     return status;
 }
 
-
 /*=====================================================================*/
-
 
 int passgets(char *s, int n)
 {
     int c;
     char *t;
-
     t = s;
     while(--n >= 0)
     {
         c = getchar();
-        if(c < 32 || c > 126) break;
+        if(c == '\n') break;
         *s++ = c;
     }
     *s = 0;
+    if(n<0) while (getchar() != '\n') { }; // n char or more, flush the rest of the buffer containing the linefeed
     return s != t;
 }
 
@@ -216,7 +214,7 @@ int password(char *pass)
             return 1;
         }
     }
-    printf("\nError\n");
+    printf("Error\n");
     return 0;
 }
 
