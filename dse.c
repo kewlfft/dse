@@ -267,7 +267,7 @@ int gen_key(char *dst, int pass) // keyfile name, pass true to request password 
 int usage(int level)
 {
     printf("usage:\n"
-       "\tdse <keyfile> [password]\n"
+       "\tdse <keyfile> [p]\n"
        "\tdse <keyfile> <e | d> <source> <destination>\n"
        "\tdse <-V | --version>\n"
        "\tdse <-h | --help>\n");
