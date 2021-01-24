@@ -37,11 +37,10 @@ IV: 16 bytes
 Max File Size: unlimited
 Cipher File Structure: [IV = 16 random bytes] + [cipherdata]
 
-=======================================================================
 Website
-
 https://web.archive.org/web/20191211120635/http://members.ozemail.com.au/~nulifetv/freezip/freeware/
 
+=======================================================================
 
 Kewl <xrjy@nygb.rh.bet(rot13)> for the linux adaptations
 =======================================================================*/
