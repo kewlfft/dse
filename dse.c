@@ -66,7 +66,7 @@ void gen_iv(u8 *buf, int size)
     while(--size >= 0) buf[size] += rand();
 }
 
-char vers[] = "1.33";
+char vers[] = "1.34";
 char msg1[] = "The data is invalid: %s\n";
 char msg2[] = "The file already exists: %s\n";
 
