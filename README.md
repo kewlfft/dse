@@ -8,9 +8,9 @@ dse <keyfile> <e | d> <source> <destination>
 ```
 - Create a random-content key file:
 ```
-dse <keyfile> [password]
+dse <keyfile> [p]
 ```
-If `password` is provided, which is optional, the keyfile will be generated from it.
+If `p` is used, a password will be requested and the keyfile will be generated from it.
 
 The generated key file has a size of 32 bytes.
 
