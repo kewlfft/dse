@@ -37,10 +37,11 @@ IV: 16 bytes
 Max File Size: unlimited
 Cipher File Structure: [IV = 16 random bytes] + [cipherdata]
 
-Website
--------
-http://www.ozemail.com.au/~nulifetv/freezip/freeware/
 =======================================================================
+Website
+
+https://web.archive.org/web/20191211120635/http://members.ozemail.com.au/~nulifetv/freezip/freeware/
+
 
 Kewl <xrjy@nygb.rh.bet(rot13)> for the linux adaptations
 =======================================================================*/
@@ -209,11 +210,10 @@ int password(char *pass)
     printf("Password: ");
     if(passgets(pass, 32))
     {
-        printf("\nVerify  : ");
+        printf("Verify  : ");
         if(passgets(temp, 32) && !strcmp(pass, temp))
         {
             memset(temp, 0, 32);
-            printf("\n");
             return 1;
         }
     }
@@ -275,7 +275,7 @@ int usage(int level)
     {
         printf("examples:\n"
            "\tdse mykey                  creates a random-content 32 bytes keyfile named mykey\n"
-           "\tdse mykey mypsw            creates a 32 bytes keyfile from the password mypsw\n"
+           "\tdse mykey p                creates a 32 bytes keyfile from a password\n"
            "\tdse mykey e data data.enc  encryption\n"
            "\tdse mykey d data.enc data  decryption\n");
     }
